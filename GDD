@@ -1,0 +1,127 @@
+ Game Design Document
+
+## Table of Contents
+  * [Game Design](#game-design)
+    * [Objective](#objective)
+    * [Gameplay Mechanics](#gameplay-mechanics)
+    * [Level Design](#level-design)
+  * [Technical](#technical)
+    * [Scenes](#scenes)
+    * [Controls/Input](#controlsinput)
+    * [Classes](#classessks)
+  * [MVP Milestones](#mvp-milestones)
+    * [Week 1](#week-1) 
+    * [Week 2](#week-2)
+    * [Week 3](#week-3)
+    * [Week 4](#week-4)
+    * [Week 5](#week-5)
+    * [Week 6](#week-6)
+
+---
+
+### Game Design
+
+#### Objective
+The game will be a vertical infinite scroller. There is no determined end, but the player will compete to see how far down they can make their character travel.
+
+#### Gameplay Mechanics
+Tap the screen to direct an impulse on the character. Avoid getting crushed between obstacles and the roof. Stave off hunger by collecting power-ups before the health meter runs out.
+
+#### Level Design
+The scenery will gradually change in order to reflect the distance the player has traveled. Different enemies will appear, and in greater numbers, as you travel deeper. Food will become increasingly sparse, but there will be more collectibles as a reward for going so far. 
+
+[Back to top ^](#)
+
+---
+
+### Technical
+
+#### Scenes
+- Actual gameplay scene (it’s an infinite scroller, so it can function with only one scene.)
+    - Pause menu
+        - Music/Sound Effect options
+        - Restart option
+- After MVP:
+    - Main Menu
+        - Achievements
+        - Store
+            - Character customization
+            - Power-up purchase
+            - Currency conversion
+        - Discovery Book (players can view all the different sea creatures they have discovered so far)
+        - Fish Tank (a sort of sandbox where the player can mess around and add entities to a decorative fish tank)
+        - Settings
+        - Game Center
+
+#### Controls/Input
+They only need to be able to tap the screen in order to add an impulse to the character. The impulse will be a vector directed towards the player (so if the left side of the screen is tapped, the player moves right; if the top is tapped, the player moves down; etc.).
+
+#### Classes/SKS
+* Classes
+- Enemy Class
+    - All enemies make physical contact with the player
+    - All enemies disappear from the scene after moving off-screen
+    - All enemies have specific depths which they can appear at
+- Food Class
+    - All food restores health to the player
+    - All food disappears upon contact with the player
+    - All food has a specific and unique ability 
+- GameScene Classes
+    - Main Menu
+    - Infinite scroller level
+
+* SKS
+- Just the infinite scroller screen
+- After MVP:
+    - Title Screen
+    - Loading Screen
+    - Main Menu
+    - Discovery Book
+    - Fish Tank
+    - Settings
+    - Achievements
+    - Game Center
+    - etc.
+
+[Back to top ^](#)
+
+---
+
+### MVP Milestones
+The game will be an infinite scroller moving downwards. The player should be able to encounter a variety of randomly generated obstacles and power-ups. 
+
+#### Week 1
+_planning your game_
+- Create an infinite scroller (follow the tutorial from Hoppy Bunny)  ✔
+- Implement the UI; players should be able to tap the screen to deliver an impulse to the character  ✔
+- Death occurs either when the health bar is empty or when the player moves too far off-screen (or would it look better if the roof was solid but they would get crushed if they collided with it and another obstacle?) [1 hour]
+
+#### Week 2
+_finishing a playable build_
+- Setup the food/enemy classes [4 hours]
+- Add obstacles  [2 hours]
+- Implement a scoring system [2 hours]
+
+#### Week 3
+- If there is no art yet, find art. If art needs to be made, make it at home. [1 hour max. per drawing]
+- Find a way to track high score [1 hour]
+- Keep adding a variety of obstacles and collectibles [4 hours]
+
+#### Week 4
+- LiquidFun implementation(?) [6 hours]
+
+#### Week 5
+_starting the polish_
+- *** Add music and sound effects *** [2 hours]
+- Add achievements [4 hours]
+- Add levels [4 hours]
+- Add collectibles [2 hours]
+- Add customization [2 hours]
+
+#### Week 6
+_submitting to the App Store_
+- Come up with a title [<1 hour]
+- Make anything that doesn’t look good look good [3 hours]
+- Ensure the game can be played on multiple devices (or, ensure that it can only be played on phones) [<1 hour]
+
+[Back to top ^](#)
