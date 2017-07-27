@@ -30,13 +30,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Scale health bar between 0.0 -> 1.0
             healthBar.xScale = health
             
-            if health > 1.0 {
-                health = 0.99
+            if health > 1.66 {
+                health = 1.60
             }
         }
     }
     
     var healthBar: SKSpriteNode!
+    
+    var scoreLabel: SKLabelNode!
+    
+    var score: Int = 0 {
+        didSet {
+            scoreLabel.text = String(score)
+        }
+    }
     
     func didBegin(_ contact: SKPhysicsContact) {
         
@@ -56,7 +64,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if contactA.categoryBitMask == 1 {
                 // Increase health and remove the food
       
-                health += 0.5
+                health += 0.1
                 removeFood(node: nodeB)
                 return
             }
@@ -64,7 +72,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if contactB.categoryBitMask == 1 {
        
-                health += 0.5
+                health += 0.1
                 removeFood(node: nodeA)
                 return
             }
@@ -78,7 +86,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
-        player = self.childNode(withName: "player") as! SKSpriteNode
+        player = self.childNode(withName: "//player") as! SKSpriteNode
         scrollLayer = self.childNode(withName: "scrollLayer")
         healthBar = childNode(withName: "healthBar") as! SKSpriteNode
         obstacleSource = self.childNode(withName: "//obstacle")
@@ -86,6 +94,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         foodSource = self.childNode(withName: "//food")
         foodLayer = self.childNode(withName: "foodLayer")
         foodLayerLeft = self.childNode(withName: "foodLayerLeft")
+        scoreLabel = self.childNode(withName: "scoreLabel") as! SKLabelNode
         
         physicsWorld.contactDelegate = self
         
@@ -165,6 +174,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             health = 0
             gameOver()
         }
+        score += 1
 
         
         scrollWorld()
