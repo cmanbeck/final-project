@@ -24,6 +24,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var foodLayerLeft: SKNode!
     var scrollLayer: SKNode!
     
+    var distance: CFTimeInterval = 0
+
     var scoreTimer: CFTimeInterval = 0
     var spawnTimer: CFTimeInterval = 0
     var greenSpawnTimer: CFTimeInterval = 0
@@ -165,17 +167,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         updateFoodRight()
         updateFoodLeft()
         
-        updateObstacles()
-        updateGreenObstacles()
-        updateRedObstacles()
         
+        
+        
+        scoreTimer += fixedDelta
         spawnTimer+=fixedDelta
         greenSpawnTimer += fixedDelta
         redSpawnTimer += fixedDelta
         spawnFoodTimer += fixedDelta
         spawnFoodLeftTimer += fixedDelta
         
-        increaseScore()
+//        increaseScore()
+        
+        distance+=fixedDelta
+        scoreLabel.text = String(Int(distance))
+        
+        if distance > 4 && distance < 100 {
+            updateGreenObstacles()
+        }
+        
+        if distance > 20 && distance < 120 {
+            updateObstacles()
+        }
+        
+        if distance > 40 && distance < 120 {
+            updateRedObstacles()
+
+        }
+        
         
     }
     
@@ -444,18 +463,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func increaseScore() {
-        
-        var delay = SKAction.wait(forDuration: 4)
-        let incrementScore = SKAction.run ({
-            self.score = self.score + 1
-            self.scoreLabel.text = "\(self.score)"
-//            delay -= 0.01
-        })
-        self.run(SKAction.repeatForever(SKAction.sequence([delay,incrementScore])))
-        
-    }
-    
+//    func increaseScore() {
+//        
+//        if ( ( scoreTimer > 0.0 ) && ( scoreTimer < 12.0 ) ) {
+//            var delay = SKAction.wait(forDuration: 4)
+//            let incrementScore = SKAction.run ({
+//                self.score = self.score + 1
+//                self.scoreLabel.text = "\(self.score)"
+////              delay -= 0.01
+//            })
+//            self.run(SKAction.repeatForever(SKAction.sequence([delay,incrementScore])))
+//        }
+//    }
+//    
     
     
     
