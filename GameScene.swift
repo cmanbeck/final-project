@@ -273,8 +273,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         if died == true {
-            self.camera?.xScale = 0.9
-            self.camera?.yScale = 0.9
+//            self.camera?.xScale = 0.9
+//            self.camera?.yScale = 0.9
         }
         
         
