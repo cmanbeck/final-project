@@ -9,7 +9,8 @@ var died = false
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    
+    var rectangleBool = true
+    var diamondBool = true
     
     let levelData = GameHandler.sharedInstance.levelData
     var gameOver = false
@@ -338,28 +339,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         
-        
-        var pattern = randomValue(highestVal: 3, lowestVal: 1) //randomValue is being called
-        
-        switch pattern {
-        //based on the value of pattern, will execute the corresponding function
-        case 1:
-            print("1")
-            spawnDiamondTimer += fixedDelta
-            updateDiamondCoins()
-       
-            
-        case 2:
-            print("2")
-            spawnRectangleTimer += fixedDelta
-            updateRectangleCoins()
-            
-        case 3:
-            print("3")
-            
-        default:
-            print("error")
-        }
+        coinPattern()
         
         /* Grab current velocity */
         let velocityY = player.physicsBody?.velocity.dy ?? 0
@@ -796,8 +776,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func updateDiamondCoins() {
         /* Update Obstacles */
         
-        diamondCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
-        
+        if diamondBool == true {
+            diamondCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
+        }
+            
         /* Loop through obstacle layer nodes */
         for diamondCoins in diamondCoinScroll.children {
             
@@ -814,7 +796,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Time to add a new obstacle? */
-        if spawnDiamondTimer >= 8 {
+        if spawnDiamondTimer >= 2 {
             
             /* Create a new obstacle by copying the source obstacle */
             let newObstacle = diamondCoins.copy() as! SKNode
@@ -836,8 +818,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     func updateRectangleCoins() {
     
-        
-        rectangleCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
+        if rectangleBool == true {
+            rectangleCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
+        }
         
         /* Loop through obstacle layer nodes */
         for rectangleCoins in rectangleCoinScroll.children {
@@ -855,7 +838,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Time to add a new obstacle? */
-        if spawnRectangleTimer >= 8 {
+        if spawnRectangleTimer >= 2 {
             
             /* Create a new obstacle by copying the source obstacle */
             let newObstacle = rectangleCoins.copy() as! SKNode
@@ -926,6 +909,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         
+    }
+    
+    
+    
+    func coinPattern() {
+        var pattern = randomValue(highestVal: 3, lowestVal: 1) //randomValue is being called
+        
+        switch pattern {
+        //based on the value of pattern, will execute the corresponding function
+        case 1: // spawn diamond pattern
+            print("1")
+            diamondBool = true
+            spawnDiamondTimer += fixedDelta
+            updateDiamondCoins()
+            rectangleBool = false
+            
+            
+        case 2: // spawn rectangle pattern
+            print("2")
+            rectangleBool = false
+            spawnRectangleTimer += fixedDelta
+            updateRectangleCoins()
+            diamondBool = false
+            
+        case 3:
+            print("3")
+            
+        default:
+            print("error :(")
+        }
+
     }
     
     
