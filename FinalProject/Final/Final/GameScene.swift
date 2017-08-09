@@ -43,6 +43,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //    var diamondSource: SKNode!
     var diamondCoins : SKNode!
     
+    var rectangleCoinScroll: SKNode!
     var rectangleCoins: SKNode!
     var fishCoins: SKNode!
     var coin: SKNode!
@@ -59,6 +60,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var spawnGoldFoodLeftTimer: CFTimeInterval = 0
     var spawnGoldFoodTimer: CFTimeInterval = 0
     var spawnDiamondTimer: CFTimeInterval = 0
+    var spawnRectangleTimer: CFTimeInterval = 0
     
     
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
@@ -72,8 +74,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Scale health bar between 0.0 -> 1.0
             healthBar.xScale = health
             
-            if health > 1.66 {
-                health = 1.60
+            if health > 1 {
+                health = 0.9
             }
         }
     }
@@ -111,6 +113,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scene.scaleMode = .aspectFit
         return scene
     }
+    
+    func randomValue(highestVal: Int, lowestVal: Int) -> Int {
+        // based on range given, will select a random value
+        let result = Int(arc4random_uniform(UInt32(highestVal - lowestVal + 1))) + lowestVal
+        return result
+    }
 
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -130,14 +138,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
                 
-                health -= 0.5
+                health -= 0.4
                 return
                 
             }
             
             if contactB.categoryBitMask == 1 {
                 
-                health -= 0.5
+                health -= 0.4
                 return
                 
             }
@@ -271,6 +279,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        coin = self.childNode(withName: "//coin")
         coinLabel = self.childNode(withName: "coinLabel") as! SKLabelNode
         
+        rectangleCoinScroll = self.childNode(withName: "rectangleCoinScroll")
+        rectangleCoins = self.childNode(withName: "//rectangleCoins")
         
         if died == true {
 //            self.camera?.xScale = 0.9
@@ -328,6 +338,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         
+        
+        var pattern = randomValue(highestVal: 3, lowestVal: 1) //randomValue is being called
+        
+        switch pattern {
+        //based on the value of pattern, will execute the corresponding function
+        case 1:
+            print("1")
+            spawnDiamondTimer += fixedDelta
+            updateDiamondCoins()
+       
+            
+        case 2:
+            print("2")
+            spawnRectangleTimer += fixedDelta
+            updateRectangleCoins()
+            
+        case 3:
+            print("3")
+            
+        default:
+            print("error")
+        }
+        
         /* Grab current velocity */
         let velocityY = player.physicsBody?.velocity.dy ?? 0
         
@@ -367,7 +400,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spawnFoodLeftTimer += fixedDelta
         spawnGoldFoodTimer += fixedDelta
         spawnGoldFoodLeftTimer += fixedDelta
-        spawnDiamondTimer += fixedDelta
+        
+        
         
 //        increaseScore()
         
@@ -396,9 +430,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             updateGoldFoodLeft()
         }
         
-        if distance > 8 {
-            updateDiamondCoins()
-        }
+//        if distance > 8 {
+//            
+//            let randomFunc = [self.updateDiamondCoins(), self.updateRectangleCoins()]
+//            let randomResult = Int(arc4random_uniform(UInt32(randomFunc.count)))
+//            randomFunc[randomResult]
+//            
+        
+            
+//            var randomCoin = Int(arc4random_uniform(3)+1)
+////
+//            if randomCoin == 1 {
+////
+//                randomCoin = 1
+//                updateDiamondCoins()
+//                return
+//                
+////                let when = DispatchTime.now() + 2
+////                DispatchQueue.main.asyncAfter(deadline: when) {
+////                    self.updateDiamondCoins()
+////                }
+////                
+////                randomCoin = 1
+////                return
+////                
+//            }
+//            
+//            if randomCoin == 2 {
+//                randomCoin = 2
+//                updateRectangleCoins()
+//                return
+//            }
+//            
+////            return
+//            
+////            updateDiamondCoins()
+////            updateRectangleCoins()
+//            
+            
+//        }
         
         
         // speed up the score
@@ -408,6 +478,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if distance > 120 {
             distance += ( fixedDelta * 3 )
+        }
+        
+        if distance > 300 {
+            distance += ( fixedDelta * 4 )
         }
         
     }
@@ -725,7 +799,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         diamondCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
         
         /* Loop through obstacle layer nodes */
-        for diamondCoins in diamondCoinScroll.children as! [SKNode] {
+        for diamondCoins in diamondCoinScroll.children {
             
             /* Get obstacle node position, convert node position to scene space */
             let diamondCoinPosition = diamondCoinScroll.convert(diamondCoins.position, to: self)
@@ -760,6 +834,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
 
+    func updateRectangleCoins() {
+    
+        
+        rectangleCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
+        
+        /* Loop through obstacle layer nodes */
+        for rectangleCoins in rectangleCoinScroll.children {
+            
+            /* Get obstacle node position, convert node position to scene space */
+            let rectangleCoinPosition = rectangleCoinScroll.convert(rectangleCoins.position, to: self)
+            
+            /* Check if obstacle has left the scene */
+            if rectangleCoinPosition.y >= 600 {
+                
+                /* Remove obstacle node from obstacle layer */
+                rectangleCoins.removeFromParent()
+            }
+            
+        }
+        
+        /* Time to add a new obstacle? */
+        if spawnRectangleTimer >= 8 {
+            
+            /* Create a new obstacle by copying the source obstacle */
+            let newObstacle = rectangleCoins.copy() as! SKNode
+            rectangleCoinScroll.addChild(newObstacle)
+            
+            /* Generate new obstacle position, start just outside screen and with a random y value */
+            let randomPosition = CGPoint(x: CGFloat.random(min: 70, max: 250), y: -50)
+            
+            /* Convert new node position back to obstacle layer space */
+            newObstacle.position = self.convert(randomPosition, to: rectangleCoinScroll)
+            
+            // Reset spawn timer
+            spawnRectangleTimer = 0
+            
+            
+        }
+        
+    }
+
+    
 
     
     // A function to remove food
