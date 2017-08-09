@@ -9,8 +9,10 @@ var died = false
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    var rectangleBool = true
-    var diamondBool = true
+    private var invincible = false
+//    
+//    var rectangleBool = true
+//    var diamondBool = true
     
     let levelData = GameHandler.sharedInstance.levelData
     var gameOver = false
@@ -46,7 +48,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var rectangleCoinScroll: SKNode!
     var rectangleCoins: SKNode!
+    
+    var fishCoinScroll: SKNode!
     var fishCoins: SKNode!
+    
     var coin: SKNode!
     
     
@@ -60,8 +65,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var spawnFoodTimer: CFTimeInterval = 0
     var spawnGoldFoodLeftTimer: CFTimeInterval = 0
     var spawnGoldFoodTimer: CFTimeInterval = 0
+    
+    
+    
     var spawnDiamondTimer: CFTimeInterval = 0
     var spawnRectangleTimer: CFTimeInterval = 0
+    var spawnFishTimer: CFTimeInterval = 0
+    
+    var spawnCoinTimer: CFTimeInterval = 0
     
     
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
@@ -78,6 +89,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if health > 1 {
                 health = 0.9
             }
+            
+//            if health < 0.3 {
+//                healthBar.run(SKAction.colorize(with: UIColor.white, colorBlendFactor: 2.0, duration: 1.0))
+//            }
         }
     }
     
@@ -134,19 +149,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         // If the collision involves an enemy...
-        if contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 {
+        if ( contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 ) && ( invincible == false ){
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
                 
                 health -= 0.4
+                
+                invincible = true
+                
+                let setInvicibleFalse = SKAction.run(){
+                    self.invincible = false
+                }
+                
+                let invincibleAction = SKAction.sequence([SKAction.fadeOut(withDuration: 0.3), SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3), SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3), SKAction.fadeIn(withDuration: 0.3), SKAction.sequence([setInvicibleFalse])])
+                player.run(invincibleAction)
+
                 return
                 
             }
             
             if contactB.categoryBitMask == 1 {
+            
+                
                 
                 health -= 0.4
+                
+                invincible = true
+                
+                let setInvicibleFalse = SKAction.run(){
+                    self.invincible = false
+                }
+                
+                let invincibleAction = SKAction.sequence([SKAction.fadeOut(withDuration: 0.5), SKAction.fadeIn(withDuration: 0.5), SKAction.fadeOut(withDuration: 0.5), SKAction.fadeIn(withDuration: 0.5), SKAction.fadeOut(withDuration: 0.5), SKAction.fadeIn(withDuration: 0.5), SKAction.sequence([setInvicibleFalse])])
+                player.run(invincibleAction)
+                
+
                 return
                 
             }
@@ -283,6 +321,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         rectangleCoinScroll = self.childNode(withName: "rectangleCoinScroll")
         rectangleCoins = self.childNode(withName: "//rectangleCoins")
         
+        fishCoinScroll = self.childNode(withName: "fishCoinScroll")
+        fishCoins = self.childNode(withName: "//fishCoins")
+        
         if died == true {
 //            self.camera?.xScale = 0.9
 //            self.camera?.yScale = 0.9
@@ -339,7 +380,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         
-        coinPattern()
+//        coinPattern()
         
         /* Grab current velocity */
         let velocityY = player.physicsBody?.velocity.dy ?? 0
@@ -371,6 +412,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
    
         scrollBg()
         
+        updateDiamondCoins()
+        updateRectangleCoins()
+        updateFishCoins()
         
         scoreTimer += fixedDelta
         spawnTimer+=fixedDelta
@@ -381,6 +425,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spawnGoldFoodTimer += fixedDelta
         spawnGoldFoodLeftTimer += fixedDelta
         
+        
+        spawnCoinTimer += fixedDelta
         
         
 //        increaseScore()
@@ -463,6 +509,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if distance > 300 {
             distance += ( fixedDelta * 4 )
         }
+        
+        if spawnCoinTimer >= 3.0 {
+            
+            coinPattern()
+            spawnCoinTimer = 0
+            
+        }
+        
+        
+        
         
     }
 
@@ -776,10 +832,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func updateDiamondCoins() {
         /* Update Obstacles */
         
-        if diamondBool == true {
+//        if diamondBool == true {
             diamondCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
-        }
-            
+//        }
+        
         /* Loop through obstacle layer nodes */
         for diamondCoins in diamondCoinScroll.children {
             
@@ -795,32 +851,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        /* Time to add a new obstacle? */
-        if spawnDiamondTimer >= 2 {
-            
-            /* Create a new obstacle by copying the source obstacle */
+    }
+    
+    func spawnDiamondCoins() {
+        //////////////////////////////////////////
+        
             let newObstacle = diamondCoins.copy() as! SKNode
             diamondCoinScroll.addChild(newObstacle)
-            
-            /* Generate new obstacle position, start just outside screen and with a random y value */
+        
             let randomPosition = CGPoint(x: CGFloat.random(min: 70, max: 250), y: -50)
             
-            /* Convert new node position back to obstacle layer space */
             newObstacle.position = self.convert(randomPosition, to: diamondCoinScroll)
-            
-            // Reset spawn timer
+        
             spawnDiamondTimer = 0
-            
-            
-        }
         
     }
 
     func updateRectangleCoins() {
     
-        if rectangleBool == true {
+//        if rectangleBool == true {
             rectangleCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
-        }
+//        }
         
         /* Loop through obstacle layer nodes */
         for rectangleCoins in rectangleCoinScroll.children {
@@ -837,9 +888,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        /* Time to add a new obstacle? */
-        if spawnRectangleTimer >= 2 {
-            
+        
+    }
+    
+    func spawnRectangleCoins() {
+        
             /* Create a new obstacle by copying the source obstacle */
             let newObstacle = rectangleCoins.copy() as! SKNode
             rectangleCoinScroll.addChild(newObstacle)
@@ -854,7 +907,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             spawnRectangleTimer = 0
             
             
+//        }
+        
+    }
+
+    
+    func updateFishCoins() {
+        
+        fishCoinScroll.position.y += scrollSpeed * CGFloat(fixedDelta)
+    
+        
+        for fishCoins in fishCoinScroll.children {
+            
+            let fishCoinPosition = fishCoinScroll.convert(fishCoins.position, to: self)
+            
+            if fishCoinPosition.y >= 600 {
+                
+                fishCoins.removeFromParent()
+            }
+            
         }
+        
+        
+    }
+    
+    func spawnFishCoins() {
+        
+        let newObstacle = fishCoins.copy() as! SKNode
+        fishCoinScroll.addChild(newObstacle)
+        
+        /* Generate new obstacle position, start just outside screen and with a random y value */
+        let randomPosition = CGPoint(x: CGFloat.random(min: 70, max: 250), y: -80)
+        
+        /* Convert new node position back to obstacle layer space */
+        newObstacle.position = self.convert(randomPosition, to: fishCoinScroll)
+        
+        // Reset spawn timer
+        spawnFishTimer = 0
+        
         
     }
 
@@ -911,37 +1001,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    
-    
     func coinPattern() {
-        var pattern = randomValue(highestVal: 3, lowestVal: 1) //randomValue is being called
+        let pattern = randomValue(highestVal: 3, lowestVal: 1) //randomValue is being called
         
         switch pattern {
         //based on the value of pattern, will execute the corresponding function
+            
         case 1: // spawn diamond pattern
+            
             print("1")
-            diamondBool = true
-            spawnDiamondTimer += fixedDelta
-            updateDiamondCoins()
-            rectangleBool = false
+            spawnDiamondCoins()
+
             
             
         case 2: // spawn rectangle pattern
+            
             print("2")
-            rectangleBool = false
-            spawnRectangleTimer += fixedDelta
-            updateRectangleCoins()
-            diamondBool = false
+            spawnRectangleCoins()
+
             
         case 3:
+            
             print("3")
+            
+            spawnFishCoins()
             
         default:
             print("error :(")
         }
 
     }
-    
-    
     
 }
