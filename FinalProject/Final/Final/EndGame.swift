@@ -24,6 +24,8 @@ class EndGame: SKScene {
     override init(size: CGSize) {
         super.init(size: size)
         
+        scene?.backgroundColor = SKColor.black
+        
         coin = SKSpriteNode(imageNamed: "coin_01")
         coin.position = CGPoint(x: 25, y: self.size.height-30)
         addChild(coin)
@@ -65,34 +67,10 @@ class EndGame: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        //let transition = SKTransition.fade(withDuration: 0.5)
-        //let gameScene = GameScene(size: self.size)
-        //self.view?.presentScene(gameScene, transition: transition)
-        //
-        //        let newScene = GameScene(size: self.size)
-        //        newScene.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        //        self.view?.presentScene(newScene)
-        
-        //        GameScene.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        
-        
+
         
         self.view?.presentScene(GameScene(fileNamed: "GameScene")!)
-        
-        
-        //        let transition = SKTransition.fade(withDuration: 0.5)
-        //        let newScene = GameScene(size: self.size)
-        //        newScene.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        //
-        //        self.view?.presentScene(newScene, transition: transition)
-        //
-        //        let gameScene:GameScene = GameScene(size: self.view!.bounds.size)
-        //        let transition = SKTransition.fade(withDuration: 1.0)
-        //        gameScene.scaleMode = SKSceneScaleMode.fill
-        //        self.view!.presentScene(gameScene, transition: transition)
-        
+  
         
         
     }

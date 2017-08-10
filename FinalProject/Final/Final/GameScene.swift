@@ -10,9 +10,6 @@ var died = false
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private var invincible = false
-//    
-//    var rectangleBool = true
-//    var diamondBool = true
     
     let levelData = GameHandler.sharedInstance.levelData
     var gameOver = false
@@ -21,6 +18,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var player: SKSpriteNode!
     var movableNode : SKSpriteNode?
+    
+    // SCROLL LAYERS
     
     var obstacleSource: SKNode!
     var obstacleLayer: SKNode!
@@ -43,7 +42,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bgScroll : SKNode!
     
     var diamondCoinScroll : SKNode!
-//    var diamondSource: SKNode!
     var diamondCoins : SKNode!
     
     var rectangleCoinScroll: SKNode!
@@ -52,11 +50,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var fishCoinScroll: SKNode!
     var fishCoins: SKNode!
     
+    var jellyfishScrollLayer: SKNode!
+    var jellyfish: SKNode!
+    
     var coin: SKNode!
     
     
     var distance: CFTimeInterval = 0
 
+    
+    // TIMERS
+    
     var scoreTimer: CFTimeInterval = 0
     var spawnTimer: CFTimeInterval = 0
     var greenSpawnTimer: CFTimeInterval = 0
@@ -73,6 +77,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var spawnFishTimer: CFTimeInterval = 0
     
     var spawnCoinTimer: CFTimeInterval = 0
+    
+    var spawnJellyfishTimer: CFTimeInterval = 0
     
     
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
@@ -109,7 +115,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var coinCounter: Int = 0 {
         didSet {
-//            coinLabel.text = String(coinCounter)
+            
             coinLabel.text = String(coinCounter)
         
         }
@@ -324,6 +330,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         fishCoinScroll = self.childNode(withName: "fishCoinScroll")
         fishCoins = self.childNode(withName: "//fishCoins")
         
+        jellyfishScrollLayer = self.childNode(withName: "jellyfishScrollLayer")
+        jellyfish = self.childNode(withName: "//jellyfish")
+        
         if died == true {
 //            self.camera?.xScale = 0.9
 //            self.camera?.yScale = 0.9
@@ -424,7 +433,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         spawnFoodLeftTimer += fixedDelta
         spawnGoldFoodTimer += fixedDelta
         spawnGoldFoodLeftTimer += fixedDelta
-        
+        spawnJellyfishTimer += fixedDelta
         
         spawnCoinTimer += fixedDelta
         
@@ -439,62 +448,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if distance > 6 /* && distance < 100 */ {
+        
+            
             updateGreenObstacles()
+            
         }
         
-        if distance > 20 /* && distance < 120 */ {
+        if distance > 25 /* && distance < 120 */ {
             updateObstacles()
         }
         
-        if distance > 40 /* && distance < 120 */ {
+        if distance > 70 /* && distance < 120 */ {
             updateRedObstacles()
 
+        }
+        
+        if distance > 160 {
+            updateJellyfish()
         }
         
         if distance > 30 {
             updateGoldFoodRight()
             updateGoldFoodLeft()
         }
-        
-//        if distance > 8 {
-//            
-//            let randomFunc = [self.updateDiamondCoins(), self.updateRectangleCoins()]
-//            let randomResult = Int(arc4random_uniform(UInt32(randomFunc.count)))
-//            randomFunc[randomResult]
-//            
-        
-            
-//            var randomCoin = Int(arc4random_uniform(3)+1)
-////
-//            if randomCoin == 1 {
-////
-//                randomCoin = 1
-//                updateDiamondCoins()
-//                return
-//                
-////                let when = DispatchTime.now() + 2
-////                DispatchQueue.main.asyncAfter(deadline: when) {
-////                    self.updateDiamondCoins()
-////                }
-////                
-////                randomCoin = 1
-////                return
-////                
-//            }
-//            
-//            if randomCoin == 2 {
-//                randomCoin = 2
-//                updateRectangleCoins()
-//                return
-//            }
-//            
-////            return
-//            
-////            updateDiamondCoins()
-////            updateRectangleCoins()
-//            
-            
-//        }
+    
         
         
         // speed up the score
@@ -547,6 +524,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 obstacle.removeFromParent()
             }
             
+            if distance > 300 && obstacle.position.x < -270 {
+                obstacleLayer.removeFromParent()
+                obstacle.removeFromParent()
+            }
+            
         }
         
         /* Time to add a new obstacle? */
@@ -583,9 +565,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Check if obstacle has left the scene */
             if greenObstaclePosition.y >= 600 {
-                // 23 is one half the height of an obstacle
-                
-                /* Remove obstacle node from obstacle layer */
+            
+                greenObstacle.removeFromParent()
+            }
+            
+            if distance > 10 && greenObstacle.position.x >= 350 {
+                print("DELETE YOURSELF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                greenObstacleLayer.removeFromParent()
                 greenObstacle.removeFromParent()
             }
             
@@ -631,6 +617,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 redObstacle.removeFromParent()
             }
             
+            if distance > 700 && redObstacle.position.x > 370 {
+                redObstacleLayer.removeFromParent()
+                redObstacle.removeFromParent()
+            }
+            
         }
         
         /* Time to add a new obstacle? */
@@ -653,15 +644,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
     }
+    
+    func updateJellyfish() {
+        
+        jellyfishScrollLayer.position.y += scrollSpeed * CGFloat(fixedDelta) / 2
+        
+        for jellyfishNode in jellyfishScrollLayer.children as! [SKSpriteNode] {
+            
+            
+            let jellyfishPosition = jellyfishScrollLayer.convert(jellyfishNode.position, to: self)
+            
+            
+            if jellyfishPosition.y >= 600 {
+                
+                
+                jellyfishNode.removeFromParent()
+                
+            }
+            
+            if distance > 800 && jellyfish.position.y > 570 {
+                jellyfishScrollLayer.removeFromParent()
+                jellyfish.removeFromParent()
+            }
+            
+        }
+        
+        /* Time to add new food? */
+        if spawnJellyfishTimer >= 15 {
+            
+            /* Create a new obstacle by copying the source obstacle */
+            let newJellyfish = jellyfish.copy() as! SKNode
+            jellyfishScrollLayer.addChild(newJellyfish)
+            
+            /* Generate new obstacle position, start just outside screen and with a random y value */
+            let randomPosition = CGPoint(x: CGFloat.random(min: 20, max: 300), y: -30)
+            
+            /* Convert new node position back to obstacle layer space */
+            newJellyfish.position = self.convert(randomPosition, to: jellyfishScrollLayer)
+            
+            // Reset spawn timer
+            spawnJellyfishTimer = 0
+            
+            
+        }
+        
+    }
 
     
-    
     func updateFoodRight() {
-        //        /* Update Food */
-    
-                // The food should spawn at a random y position. Its direction should also be randomly determined.
-                // If the RNG picks 1, the food comes from the right. If the RNG picks 2, it comes from the left.
-        //
+
         foodLayer.position.x -= scrollSpeed * CGFloat(fixedDelta)
         
         /* Loop through food layer nodes */
@@ -937,7 +968,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         fishCoinScroll.addChild(newObstacle)
         
         /* Generate new obstacle position, start just outside screen and with a random y value */
-        let randomPosition = CGPoint(x: CGFloat.random(min: 70, max: 250), y: -80)
+        let randomPosition = CGPoint(x: CGFloat.random(min: 130, max: 240), y: -80)
         
         /* Convert new node position back to obstacle layer space */
         newObstacle.position = self.convert(randomPosition, to: fishCoinScroll)
@@ -947,7 +978,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
     }
-
+    
+    
     
 
     
@@ -982,12 +1014,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let totalCoins = currentCoins! + prevCoins
         
         defaults.set(totalCoins, forKey: "coinCounter")
-            
+        
         
         died = true
         /* Make the player turn red */
 //        player.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.50))
-
         
         let transition = SKTransition.fade(withDuration: 0.5)
         let endGameScene = EndGame(size: self.size)
