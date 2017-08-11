@@ -50,6 +50,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var fishCoinScroll: SKNode!
     var fishCoins: SKNode!
     
+    
+    // FEVER!!
+    var fnodeScroll:SKNode!
+    var fnode: SKNode!
+    
+    var enode1Scroll:SKNode!
+    var enode1: SKNode!
+    
+    var vnodeScroll:SKNode!
+    var vnode: SKNode!
+    
+    var enode2Scroll:SKNode!
+    var enode2: SKNode!
+    
+    var rnodeScroll:SKNode!
+    var rnode: SKNode!
+    
+    
     var jellyfishScrollLayer: SKNode!
     var jellyfish: SKNode!
     
@@ -80,6 +98,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var spawnJellyfishTimer: CFTimeInterval = 0
     
+    var spawnFeverTimer: CFTimeInterval = 0 
     
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var scrollSpeed: CGFloat = 100
@@ -157,6 +176,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves an enemy...
         if ( contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 ) && ( invincible == false ){
             
+            
+            
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
                 
@@ -232,6 +253,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 health += 0.5
                 removeFood(node: nodeB)
+                
                 return
             }
             
@@ -268,6 +290,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             
+            
+        }
+        
+        // If the collision involves letters...
+        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
+            
+            
+            // If the collision involves the player...
+            if contactA.categoryBitMask == 1 {
+                
+                print("FEVER")
+            }
+            
+            
+            if contactB.categoryBitMask == 1 {
+                
+                print("FEVER")
+            }
             
         }
         
@@ -333,6 +373,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         jellyfishScrollLayer = self.childNode(withName: "jellyfishScrollLayer")
         jellyfish = self.childNode(withName: "//jellyfish")
         
+        fnodeScroll = self.childNode(withName: "fnodeScroll")
+        fnode = self.childNode(withName: "//fnode")
+        
+        enode1Scroll = self.childNode(withName: "enode1Scroll")
+        enode1 = self.childNode(withName: "//enode1")
+        
+        vnodeScroll = self.childNode(withName: "vnodeScroll")
+        vnode = self.childNode(withName: "//vnode")
+        
+        enode2Scroll = self.childNode(withName: "enode2Scroll")
+        enode2 = self.childNode(withName: "//enode2")
+        
+        rnodeScroll = self.childNode(withName: "rnodeScroll")
+        rnode = self.childNode(withName: "//rnode")
+        
         if died == true {
 //            self.camera?.xScale = 0.9
 //            self.camera?.yScale = 0.9
@@ -389,7 +444,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         
-//        coinPattern()
         
         /* Grab current velocity */
         let velocityY = player.physicsBody?.velocity.dy ?? 0
@@ -425,6 +479,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         updateRectangleCoins()
         updateFishCoins()
         
+//        updateFNode()
+        
+        
         scoreTimer += fixedDelta
         spawnTimer+=fixedDelta
         greenSpawnTimer += fixedDelta
@@ -454,20 +511,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        if distance > 25 /* && distance < 120 */ {
+        if distance > 30 /* && distance < 120 */ {
             updateObstacles()
         }
         
-        if distance > 70 /* && distance < 120 */ {
+        if distance > 120 /* && distance < 120 */ {
             updateRedObstacles()
 
         }
         
-        if distance > 160 {
+        if distance > 260 {
             updateJellyfish()
         }
         
-        if distance > 30 {
+        if distance > 40 {
             updateGoldFoodRight()
             updateGoldFoodLeft()
         }
@@ -485,6 +542,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if distance > 300 {
             distance += ( fixedDelta * 4 )
+        }
+        
+        if distance > 600 {
+            distance += ( fixedDelta * 5 )
         }
         
         if spawnCoinTimer >= 3.0 {
@@ -524,10 +585,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 obstacle.removeFromParent()
             }
             
-            if distance > 300 && obstacle.position.x < -270 {
-                obstacleLayer.removeFromParent()
-                obstacle.removeFromParent()
-            }
+//            if distance > 600 {
+//                obstacleLayer.removeFromParent()
+//                obstacle.removeFromParent()
+//            }
             
         }
         
@@ -539,7 +600,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             obstacleLayer.addChild(newObstacle)
             
             /* Generate new obstacle position, start just outside screen and with a random y value */
-            let randomPosition = CGPoint(x: 352, y: CGFloat.random(min: 100, max: 382))
+            let randomPosition = CGPoint(x: 540, y: CGFloat.random(min: 100, max: 382))
             
             /* Convert new node position back to obstacle layer space */
             newObstacle.position = self.convert(randomPosition, to: obstacleLayer)
@@ -569,11 +630,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 greenObstacle.removeFromParent()
             }
             
-            if distance > 10 && greenObstacle.position.x >= 350 {
-                print("DELETE YOURSELF!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                greenObstacleLayer.removeFromParent()
-                greenObstacle.removeFromParent()
-            }
+//            var vanishingTime = false
+//            
+//            if distance > 400 /* && greenObstacle.position.x >= 350 */{
+//                
+////                greenObstacleLayer.isHidden = true
+////                greenObstacle.isHidden = true
+////                vanishingTime = true
+//            }
             
         }
         
@@ -617,10 +681,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 redObstacle.removeFromParent()
             }
             
-            if distance > 700 && redObstacle.position.x > 370 {
-                redObstacleLayer.removeFromParent()
-                redObstacle.removeFromParent()
-            }
+//            if distance > 850  {
+//                redObstacleLayer.removeFromParent()
+//                redObstacle.removeFromParent()
+//            }
             
         }
         
@@ -662,10 +726,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
             }
             
-            if distance > 800 && jellyfish.position.y > 570 {
-                jellyfishScrollLayer.removeFromParent()
-                jellyfish.removeFromParent()
-            }
+//            if distance > 800 && jellyfish.position.y > 570 {
+//                jellyfishScrollLayer.removeFromParent()
+//                jellyfish.removeFromParent()
+//            }
             
         }
         
@@ -785,13 +849,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Get food node position, convert node position to scene space */
             let foodPosition = goldFoodLayer.convert(goldFood.position, to: self)
+//            let goldTrailRightPosition = goldFoodLayer.convert(goldTrailRight.position, to: self)
+            
             
             /* Check if food has left the scene */
             if foodPosition.x <= -24 {
                 
                 /* Remove food node from obstacle layer */
                 goldFood.removeFromParent()
-                
+//                golfTrailRight.removeFromParent()
             }
             
         }
@@ -828,12 +894,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Get food node position, convert node position to scene space */
             let foodPosition = foodLayerLeft.convert(goldFoodLeft.position, to: self)
+//            let goldTrailLeftPosition = foodLayerLeft.convert(goldFoodLeft.position, to: self)
+//            goldTrailLeft?.position = foodPosition
             
             /* Check if food has left the scene */
             if foodPosition.x >= 350 {
                 
                 /* Remove food node from obstacle layer */
                 goldFoodLeft.removeFromParent()
+//                goldTrailLeft.removeFromParent
+                
+                
                 
             }
             
