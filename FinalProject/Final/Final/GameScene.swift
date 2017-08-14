@@ -548,7 +548,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             distance += ( fixedDelta * 5 )
         }
         
-        if spawnCoinTimer >= 3.0 {
+        if spawnCoinTimer >= 8.0 {
             
             coinPattern()
             spawnCoinTimer = 0

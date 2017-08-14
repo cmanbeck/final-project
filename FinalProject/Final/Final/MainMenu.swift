@@ -13,15 +13,21 @@ class MainMenu: SKScene {
     
     // UI connections
     var buttonPlay : MSButtonNode!
+    var buttonStore: MSButtonNode!
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
         /* Set UI connections */
         buttonPlay = self.childNode(withName: "buttonPlay") as! MSButtonNode
+        buttonStore = self.childNode(withName: "buttonStore") as! MSButtonNode
         
         buttonPlay.selectedHandler = {
             self.loadGame()
+        }
+        
+        buttonStore.selectedHandler = {
+            self.loadStore()
         }
         
     }
@@ -50,6 +56,34 @@ class MainMenu: SKScene {
         
         // 4) Start game scene
         skView.presentScene(scene)
+        
+    }
+    
+    func loadStore() {
+        
+        // 1) Grab reference to SpriteKit view
+        guard let skView = self.view as SKView! else {
+            print("Could not get Skview")
+            return
+        }
+        
+        /* 2) Load Game scene */
+        guard let scene = Store(fileNamed:"Store") else {
+            print("Could not load Store.")
+            return
+        }
+        
+        // 3) Ensure correct aspect mode
+        scene.scaleMode = .aspectFit
+        
+        // Show debug
+        skView.showsPhysics = true
+        skView.showsDrawCount = true
+        skView.showsFPS = true
+        
+        // 4) Start game scene
+        skView.presentScene(scene)
+
         
     }
     
