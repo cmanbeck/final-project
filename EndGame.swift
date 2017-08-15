@@ -3,17 +3,23 @@ import SpriteKit
 
 class EndGame: SKScene {
     
-    
     var coin: SKSpriteNode!
     
     var coinCounter:SKLabelNode!
     
+    var scoreLabelText: SKLabelNode!
+    
     var scoreLabel:SKLabelNode!
+    
+    var highScoreLabelText: SKLabelNode!
     
     var highScoreLabel:SKLabelNode!
     
+    var deadFish: SKSpriteNode!
+    
     var tryAgainLabel:SKLabelNode!
     
+    var gameIsEnded: Bool = true
     
     
     
@@ -23,6 +29,8 @@ class EndGame: SKScene {
     
     override init(size: CGSize) {
         super.init(size: size)
+        
+        scene?.backgroundColor = SKColor.black
         
         coin = SKSpriteNode(imageNamed: "coin_01")
         coin.position = CGPoint(x: 25, y: self.size.height-30)
@@ -37,23 +45,41 @@ class EndGame: SKScene {
         coinCounter.text = "  \(GameHandler.sharedInstance.coinCounter)"
         addChild(coinCounter)
         
+        scoreLabelText = SKLabelNode(fontNamed: "Verdana")
+        scoreLabelText.fontSize = 30
+        scoreLabelText.fontColor = SKColor.white
+        scoreLabelText.position = CGPoint(x: self.size.width / 2, y: 450)
+        scoreLabelText.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
+        scoreLabelText.text = "Score:"
+        addChild(scoreLabelText)
         
         scoreLabel = SKLabelNode(fontNamed: "Verdana")
-        scoreLabel.fontSize = 60
+        scoreLabel.fontSize = 30
         scoreLabel.fontColor = SKColor.white
-        scoreLabel.position = CGPoint(x: self.size.width / 2, y: 300)
+        scoreLabel.position = CGPoint(x: self.size.width / 2, y: 420)
         scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         scoreLabel.text = "\(GameHandler.sharedInstance.score)"
         addChild(scoreLabel)
         
+        highScoreLabelText = SKLabelNode(fontNamed: "Verdana")
+        highScoreLabelText.fontSize = 30
+        highScoreLabelText.fontColor = SKColor.white
+        highScoreLabelText.position = CGPoint(x: self.size.width / 2, y: 350)
+        highScoreLabelText.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
+        highScoreLabelText.text = "High Score:"
+        addChild(highScoreLabelText)
         
         highScoreLabel = SKLabelNode(fontNamed: "Verdana")
         highScoreLabel.fontSize = 30
-        highScoreLabel.fontColor = SKColor.red
-        highScoreLabel.position = CGPoint(x: self.size.width / 2, y: 450)
+        highScoreLabel.fontColor = SKColor.white
+        highScoreLabel.position = CGPoint(x: self.size.width / 2, y: 320)
         highScoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         highScoreLabel.text = "\(GameHandler.sharedInstance.highScore)"
         addChild(highScoreLabel)
+        
+        deadFish = SKSpriteNode(imageNamed: "piranha_dead")
+        deadFish.position = CGPoint(x: self.size.width / 2, y: 240 )
+        addChild(deadFish)
         
         tryAgainLabel = SKLabelNode(fontNamed: "Verdana")
         tryAgainLabel.fontSize = 30
@@ -62,41 +88,31 @@ class EndGame: SKScene {
         tryAgainLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         tryAgainLabel.text = "Play Again"
         addChild(tryAgainLabel)
+    
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        //let transition = SKTransition.fade(withDuration: 0.5)
-        //let gameScene = GameScene(size: self.size)
-        //self.view?.presentScene(gameScene, transition: transition)
-        //
-        //        let newScene = GameScene(size: self.size)
-        //        newScene.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        //        self.view?.presentScene(newScene)
-        
-        //        GameScene.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        
-        
-        
+
+        gameIsEnded = false
         self.view?.presentScene(GameScene(fileNamed: "GameScene")!)
-        
-        
-        //        let transition = SKTransition.fade(withDuration: 0.5)
-        //        let newScene = GameScene(size: self.size)
-        //        newScene.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        //
-        //        self.view?.presentScene(newScene, transition: transition)
-        //
-        //        let gameScene:GameScene = GameScene(size: self.view!.bounds.size)
-        //        let transition = SKTransition.fade(withDuration: 1.0)
-        //        gameScene.scaleMode = SKSceneScaleMode.fill
-        //        self.view!.presentScene(gameScene, transition: transition)
-        
+  
         
         
     }
     
+    
+    override func didMove(to view: SKView) {
+
+        
+        if gameIsEnded == true {
+
+            let sound = SKAction.playSoundFileNamed("gameOverMusic.mp3", waitForCompletion: false)
+            self.run(sound)
+            
+        }
+
+
+    }
     
     
 }

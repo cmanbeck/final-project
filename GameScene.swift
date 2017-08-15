@@ -351,11 +351,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         
         if gameOver == false {
-            let gameBackgroundMusic = SKAction.playSoundFileNamed("bgmusic.mp3", waitForCompletion: false)
+            if let musicURL = Bundle.main.url(forResource: "bgmusic", withExtension: "mp3") {
+                gameBackgroundMusic = SKAudioNode(url: musicURL)
+                addChild(gameBackgroundMusic)
+            }
             
-            self.run(gameBackgroundMusic)
         }
-        
         
         buttonPause = self.childNode(withName: "buttonPause") as! MSButtonNode
         
@@ -364,12 +365,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // if the game is unpaused when the button is pressed, it will be paused when pressed again
             if self.viewIsPaused == false {
                 self.viewIsPaused = true
+                self.player.physicsBody?.affectedByGravity = false
+                self.player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
                 print("paused")
             }
             
             // if the game is paused when the button is pressed, it will be unpaused when pressed again
             else if self.viewIsPaused == true {
                 self.viewIsPaused = false
+                self.player.physicsBody?.affectedByGravity = true
                 print("unpaused")
             }
             
@@ -589,7 +593,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             distance += fixedDelta
         }
         
-        if distance > 10 && viewIsPaused == false /* && distance < 100 */ {
+        if distance > 12 && viewIsPaused == false /* && distance < 100 */ {
         
             
             updateGreenObstacles()
@@ -605,7 +609,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         }
         
-        if distance > 400 && viewIsPaused == false {
+        if distance > 450 && viewIsPaused == false {
             updateJellyfish()
         }
         

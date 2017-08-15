@@ -1,5 +1,5 @@
 //
-//  Store.swift
+//  Credits.swift
 //  Final
 //
 //  Created by courtney manbeck on 8/14/17.
@@ -9,42 +9,42 @@
 import Foundation
 import SpriteKit
 
-class Store: SKScene, SKPhysicsContactDelegate {
+class Credits: SKScene, SKPhysicsContactDelegate {
     
-    var coin: SKSpriteNode!
+    var playMusic = true
     
-    var coinCounter:SKLabelNode!
+    var backgroundMusic: SKAudioNode!
 
+    
+    let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
+    var scrollSpeed: CGFloat = 100
+    
+    var creditsScroll : SKNode!
     
     var buttonMenu : MSButtonNode!
-    
-    var shopBackgroundMusic: SKAudioNode!
-    
-    var inShop = true
-    
 
-    
     override func didMove(to view: SKView) {
-    
-        if inShop == true {
-            if let musicURL = Bundle.main.url(forResource: "shopMusic", withExtension: "mp3") {
-                shopBackgroundMusic = SKAudioNode(url: musicURL)
-                addChild(shopBackgroundMusic)
+        
+        if playMusic == true {
+            if let musicURL = Bundle.main.url(forResource: "Harp", withExtension: "mp3") {
+                backgroundMusic = SKAudioNode(url: musicURL)
+                addChild(backgroundMusic)
             }
-
+            
         }
+
+        
+        creditsScroll = self.childNode(withName: "creditsScroll")
         
         buttonMenu = self.childNode(withName: "buttonMenu") as! MSButtonNode
         
         buttonMenu.selectedHandler = {
             self.loadMenu()
-            self.inShop = false
-            
+            self.playMusic = false
         }
         
         
         
-
         
     }
     
@@ -72,11 +72,29 @@ class Store: SKScene, SKPhysicsContactDelegate {
         
         // 4) Start game scene
         skView.presentScene(scene)
-
+        
         
         
     }
-
+    
+    func scrollCredits() {
+        /* Scroll World */
+        
+        if creditsScroll.position.y < 1505 {
+            creditsScroll.position.y += scrollSpeed * CGFloat(fixedDelta) / 3
+        }
+        
+        
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+     
+        scrollCredits()
+        
+    }
+    
+    
+    
     
     
 }
