@@ -18,6 +18,10 @@ class Store: SKScene, SKPhysicsContactDelegate {
     
     var buttonMenu : MSButtonNode!
     
+    var shopBackgroundMusic: SKAudioNode!
+    
+    var inShop = true
+    
 //    required init?(coder aDecoder: NSCoder) {
 //        super.init(coder: aDecoder)
 //    }
@@ -48,11 +52,27 @@ class Store: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
     
+//        let shopBackgroundMusic = SKAction.playSoundFileNamed("shopMusic.mp3", waitForCompletion: false)
+//        self.run(shopBackgroundMusic)
+        
+        if inShop == true {
+            if let musicURL = Bundle.main.url(forResource: "shopMusic", withExtension: "mp3") {
+                shopBackgroundMusic = SKAudioNode(url: musicURL)
+                addChild(shopBackgroundMusic)
+            }
+
+        }
+        
         buttonMenu = self.childNode(withName: "buttonMenu") as! MSButtonNode
         
         buttonMenu.selectedHandler = {
             self.loadMenu()
+            self.inShop = false
+            
         }
+        
+        
+        
 
         
     }

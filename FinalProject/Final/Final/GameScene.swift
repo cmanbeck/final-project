@@ -9,7 +9,16 @@ var died = false
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    let worldNode = SKNode()
+    
+    var gameBackgroundMusic:  SKAudioNode!
+    
     private var invincible = false
+    
+    var buttonPause : MSButtonNode!
+    var buttonPlay: MSButtonNode!
+    
+    var viewIsPaused: Bool = false
     
     let levelData = GameHandler.sharedInstance.levelData
     var gameOver = false
@@ -17,7 +26,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var cameraNode: SKCameraNode!
     
     var player: SKSpriteNode!
-    var movableNode : SKSpriteNode?
+    var movePlayer : SKNode!
     
     // SCROLL LAYERS
     
@@ -174,7 +183,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         // If the collision involves an enemy...
-        if ( contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 ) && ( invincible == false ){
+        if ( contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 ) && ( invincible == false ) && viewIsPaused == false {
             
             
             
@@ -219,7 +228,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // If the collision involves food...
-        if contactA.categoryBitMask == 8 || contactB.categoryBitMask == 8 {
+        if contactA.categoryBitMask == 8 || contactB.categoryBitMask == 8 && viewIsPaused == false {
             
             
             // If the collision involves the player...
@@ -244,7 +253,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // If the collision involves gold food...
-        if contactA.categoryBitMask == 9 || contactB.categoryBitMask == 9 {
+        if contactA.categoryBitMask == 9 || contactB.categoryBitMask == 9 && viewIsPaused == false {
             
             
             // If the collision involves the player...
@@ -270,7 +279,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // If the collision involves coins...
-        if contactA.categoryBitMask == 16 || contactB.categoryBitMask == 16 {
+        if contactA.categoryBitMask == 16 || contactB.categoryBitMask == 16 && viewIsPaused == false {
             
             
             // If the collision involves the player...
@@ -294,7 +303,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // If the collision involves letters...
-        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
+        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 && viewIsPaused == false {
             
             
             // If the collision involves the player...
@@ -313,7 +322,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         // If the collision involves nodeRemover...
-        if contactA.categoryBitMask == 50 || contactB.categoryBitMask == 50 {
+        if contactA.categoryBitMask == 50 || contactB.categoryBitMask == 50 && viewIsPaused == false {
             
             if contactA.categoryBitMask == 7 {
                 nodeA.removeFromParent()
@@ -332,8 +341,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
+//        
+//        addChild(worldNode)
+//        worldNode.addChild(player)
+//        worldNode.addChild(greenObstacleLayer)
         
-        player = self.childNode(withName: "player") as! SKSpriteNode
+//        gameBackgroundMusic = SKAudioNode(fileNamed:"bgmusic.mp3")
+//        addChild(gameBackgroundMusic)
+
+        
+        if gameOver == false {
+            if let musicURL = Bundle.main.url(forResource: "bgmusic", withExtension: "mp3") {
+                gameBackgroundMusic = SKAudioNode(url: musicURL)
+                addChild(gameBackgroundMusic)
+            }
+            
+        }
+        
+        buttonPause = self.childNode(withName: "buttonPause") as! MSButtonNode
+        
+        buttonPause.selectedHandler = {
+            
+            // if the game is unpaused when the button is pressed, it will be paused when pressed again
+            if self.viewIsPaused == false {
+                self.viewIsPaused = true
+                self.player.physicsBody?.affectedByGravity = false
+                self.player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                print("paused")
+            }
+            
+            // if the game is paused when the button is pressed, it will be unpaused when pressed again
+            else if self.viewIsPaused == true {
+                self.viewIsPaused = false
+                self.player.physicsBody?.affectedByGravity = true
+                print("unpaused")
+            }
+            
+        
+        }
+        
+        
+        player = self.childNode(withName: "//player") as! SKSpriteNode
+        movePlayer = self.childNode(withName: "movePlayer") as! SKNode
         scrollLayer = self.childNode(withName: "scrollLayer")
         bgScroll = self.childNode(withName: "bgScroll")
         healthBar = childNode(withName: "healthBar") as! SKSpriteNode
@@ -362,7 +411,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        diamondSource = self.childNode(withName: "//coin")
         diamondCoins = self.childNode(withName: "//diamondCoins")
 //        coin = self.childNode(withName: "//coin")
-        coinLabel = self.childNode(withName: "coinLabel") as! SKLabelNode
+        coinLabel = self.childNode(withName: "//coinLabel") as! SKLabelNode
         
         rectangleCoinScroll = self.childNode(withName: "rectangleCoinScroll")
         rectangleCoins = self.childNode(withName: "//rectangleCoins")
@@ -393,51 +442,74 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //            self.camera?.yScale = 0.9
         }
         
-        
-        physicsWorld.contactDelegate = self
-        
+        if viewIsPaused == false {
+            physicsWorld.contactDelegate = self
+        }
     }
     
   
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+       
+            player.physicsBody?.affectedByGravity = false
+            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+
+     
         
-        player.physicsBody?.affectedByGravity = false
-        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        
-//        for t in touches{
+        for t in touches{
 //            let pos = t.location(in: self)
+            
+//            if player.position == pos {
+//                player.position = pos
+//            }
+            
 //            player?.position = pos
 //            print(player.position)
-//            
-//        }
+            
+        }
         
     }
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touches moved")
+//        print("touches moved")
 
         
         for t in touches{
-            let pos = t.location(in: self)
-            player?.position = pos
-            print(player.position)
+            
+            if viewIsPaused == false {
+                
+                let pos = t.location(in: self)
+//            movePlayer?.position = pos
+//            print(movePlayer?.position)
+
+                player.position = pos
+                print(player.position)
+                
+                player.physicsBody?.affectedByGravity = false
+            }
+            
             
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        player.physicsBody?.affectedByGravity = true
+        if viewIsPaused == false {
+            player.physicsBody?.affectedByGravity = true
+        }
+        
+        if viewIsPaused == true {
+            player.physicsBody?.affectedByGravity = false
+        }
         
     }
     
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first {
-            movableNode = nil
-        }
-    }
+//    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        if let touch = touches.first {
+//            movableNode = nil
+//        }
+//    }
 
     
     // ************ UPDATE FUNCTION ************
@@ -458,8 +530,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         // Decrease health
-        health -= 0.001
-        if health < 0 {
+        if viewIsPaused == false {
+            health -= 0.001
+        }
+        
+        if health < 0  {
             health = 0
 //            gameOver()
             
@@ -468,16 +543,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
 //        scrollWorld()
  
-        updateFoodRight()
-        updateFoodLeft()
-        
-        
+        if viewIsPaused == false {
+            updateFoodRight()
+            updateFoodLeft()
+            
+            scrollBg()
+            
+            updateDiamondCoins()
+            updateRectangleCoins()
+            updateFishCoins()
+            
+//            player.physicsBody?.affectedByGravity = true
+            
+            
+        }
+//        
+        if viewIsPaused == true {
+            player.physicsBody?.affectedByGravity = false
+        }
    
-        scrollBg()
         
-        updateDiamondCoins()
-        updateRectangleCoins()
-        updateFishCoins()
+        
+        
         
 //        updateFNode()
         
@@ -497,34 +584,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
 //        increaseScore()
         
-        distance+=fixedDelta
+        if viewIsPaused == false {
+            distance+=fixedDelta
+        }
         scoreLabel.text = String(Int(distance))
         
-        if distance > 30 {
+        if distance > 30 && viewIsPaused == false {
             distance += fixedDelta
         }
         
-        if distance > 6 /* && distance < 100 */ {
+        if distance > 12 && viewIsPaused == false /* && distance < 100 */ {
         
             
             updateGreenObstacles()
             
         }
         
-        if distance > 30 /* && distance < 120 */ {
+        if distance > 40 && viewIsPaused == false /* && distance < 120 */ {
             updateObstacles()
         }
         
-        if distance > 120 /* && distance < 120 */ {
+        if distance > 180 && viewIsPaused == false /* && distance < 120 */ {
             updateRedObstacles()
 
         }
         
-        if distance > 260 {
+        if distance > 450 && viewIsPaused == false {
             updateJellyfish()
         }
         
-        if distance > 40 {
+        if distance > 80 && viewIsPaused == false {
             updateGoldFoodRight()
             updateGoldFoodLeft()
         }
@@ -532,32 +621,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         // speed up the score
-        if distance > 35 {
+        if distance > 35 && viewIsPaused == false {
             distance += (fixedDelta * 2)
         }
         
-        if distance > 120 {
+        if distance > 120 && viewIsPaused == false {
             distance += ( fixedDelta * 3 )
         }
         
-        if distance > 300 {
+        if distance > 300 && viewIsPaused == false {
             distance += ( fixedDelta * 4 )
         }
         
-        if distance > 600 {
+        if distance > 600 && viewIsPaused == false {
             distance += ( fixedDelta * 5 )
         }
         
-        if spawnCoinTimer >= 8.0 {
+        if distance > 20 && spawnCoinTimer >= 8.0 && viewIsPaused == false {
             
             coinPattern()
             spawnCoinTimer = 0
             
         }
         
-        
-        
-        
+
     }
 
     
