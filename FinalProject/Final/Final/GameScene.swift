@@ -185,10 +185,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves an enemy...
         if ( contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 ) && ( invincible == false ) && viewIsPaused == false {
             
-            
+            let damage = SKAction.playSoundFileNamed("interface6.wav", waitForCompletion: false)
+            self.run(damage)
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
+                
+                
                 
                 health -= 0.4
                 
@@ -230,6 +233,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves food...
         if contactA.categoryBitMask == 8 || contactB.categoryBitMask == 8 && viewIsPaused == false {
             
+            let foodSound = SKAction.playSoundFileNamed("swing2.wav", waitForCompletion: false)
+            self.run(foodSound)
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
@@ -256,6 +261,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if contactA.categoryBitMask == 9 || contactB.categoryBitMask == 9 && viewIsPaused == false {
             
             
+            let foodSound = SKAction.playSoundFileNamed("swing2.wav", waitForCompletion: false)
+            self.run(foodSound)
+            
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
                 // Increase health and remove the food
@@ -281,6 +289,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves coins...
         if contactA.categoryBitMask == 16 || contactB.categoryBitMask == 16 && viewIsPaused == false {
             
+            
+            let coinSound = SKAction.playSoundFileNamed("coin3.mp3", waitForCompletion: false)
+            self.run(coinSound)
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {

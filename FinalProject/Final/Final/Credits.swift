@@ -11,9 +11,13 @@ import SpriteKit
 
 class Credits: SKScene, SKPhysicsContactDelegate {
     
+    var playMusic = true
+    
+    var backgroundMusic: SKAudioNode!
+
+    
     let fixedDelta: CFTimeInterval = 1.0 / 60.0 /* 60 FPS */
     var scrollSpeed: CGFloat = 100
-
     
     var creditsScroll : SKNode!
     
@@ -21,13 +25,22 @@ class Credits: SKScene, SKPhysicsContactDelegate {
 
     override func didMove(to view: SKView) {
         
+        if playMusic == true {
+            if let musicURL = Bundle.main.url(forResource: "Harp", withExtension: "mp3") {
+                backgroundMusic = SKAudioNode(url: musicURL)
+                addChild(backgroundMusic)
+            }
+            
+        }
+
+        
         creditsScroll = self.childNode(withName: "creditsScroll")
         
         buttonMenu = self.childNode(withName: "buttonMenu") as! MSButtonNode
         
         buttonMenu.selectedHandler = {
             self.loadMenu()
-                        
+            self.playMusic = false
         }
         
         

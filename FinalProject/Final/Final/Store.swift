@@ -22,39 +22,10 @@ class Store: SKScene, SKPhysicsContactDelegate {
     
     var inShop = true
     
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
-//
-//    override init(size: CGSize) {
-//        super.init(size: size)
-//        
-//        scene?.backgroundColor = SKColor.black
-//        
-//        coin = SKSpriteNode(imageNamed: "coin_01")
-//        coin.position = CGPoint(x: 25, y: self.size.height-30)
-//        addChild(coin)
-//        
-//        coinCounter = SKLabelNode(fontNamed: "Verdana")
-//        coinCounter.fontSize = 30
-//        coinCounter.fontColor = SKColor.white
-//        coinCounter.position = CGPoint(x: 50, y: self.size.height-40)
-//        coinCounter.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
-//        
-//        coinCounter.text = "  \(GameHandler.sharedInstance.coinCounter)"
-//        addChild(coinCounter)
-//        
-//        
-//        
-//        
-//    }
 
     
     override func didMove(to view: SKView) {
     
-//        let shopBackgroundMusic = SKAction.playSoundFileNamed("shopMusic.mp3", waitForCompletion: false)
-//        self.run(shopBackgroundMusic)
-        
         if inShop == true {
             if let musicURL = Bundle.main.url(forResource: "shopMusic", withExtension: "mp3") {
                 shopBackgroundMusic = SKAudioNode(url: musicURL)

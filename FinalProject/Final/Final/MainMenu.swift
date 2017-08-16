@@ -11,6 +11,10 @@ import SpriteKit
 
 class MainMenu: SKScene {
     
+    var playMusic = true
+    
+    var backgroundMusic: SKAudioNode!
+    
     // UI connections
     var buttonPlay : MSButtonNode!
     var buttonStore: MSButtonNode!
@@ -19,6 +23,15 @@ class MainMenu: SKScene {
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
+        if playMusic == true {
+            if let musicURL = Bundle.main.url(forResource: "Harp", withExtension: "mp3") {
+                backgroundMusic = SKAudioNode(url: musicURL)
+                addChild(backgroundMusic)
+            }
+            
+        }
+        
+        
         /* Set UI connections */
         buttonPlay = self.childNode(withName: "buttonPlay") as! MSButtonNode
         buttonStore = self.childNode(withName: "buttonStore") as! MSButtonNode
@@ -26,14 +39,17 @@ class MainMenu: SKScene {
         
         buttonPlay.selectedHandler = {
             self.loadGame()
+            self.playMusic = false
         }
         
         buttonStore.selectedHandler = {
             self.loadStore()
+            self.playMusic = false
         }
         
         buttonCredits.selectedHandler = {
             self.loadCredits()
+            self.playMusic = true
         }
         
     }
