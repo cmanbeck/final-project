@@ -23,6 +23,12 @@ class MainMenu: SKScene {
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
+        
+        
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
+        
         if playMusic == true {
             if let musicURL = Bundle.main.url(forResource: "Harp", withExtension: "mp3") {
                 backgroundMusic = SKAudioNode(url: musicURL)

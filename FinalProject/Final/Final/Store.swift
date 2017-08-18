@@ -26,6 +26,11 @@ class Store: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
     
+        
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
+        
         if inShop == true {
             if let musicURL = Bundle.main.url(forResource: "shopMusic", withExtension: "mp3") {
                 shopBackgroundMusic = SKAudioNode(url: musicURL)

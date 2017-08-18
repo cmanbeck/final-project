@@ -21,6 +21,9 @@ class EndGame: SKScene {
     
     var gameIsEnded: Bool = true
     
+    var gameOverMusic: SKAudioNode!
+    
+//    var buttonMenu : MSButtonNode!
     
     
     required init?(coder aDecoder: NSCoder) {
@@ -86,7 +89,7 @@ class EndGame: SKScene {
         tryAgainLabel.fontColor = SKColor.white
         tryAgainLabel.position = CGPoint(x: self.size.width / 2, y: 50)
         tryAgainLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
-        tryAgainLabel.text = "Play Again"
+        tryAgainLabel.text = "Return to Menu"
         addChild(tryAgainLabel)
     
     }
@@ -94,9 +97,8 @@ class EndGame: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         gameIsEnded = false
-        self.view?.presentScene(GameScene(fileNamed: "GameScene")!)
+        self.view?.presentScene(MainMenu(fileNamed: "MainMenu")!)
   
-        
         
     }
     
@@ -104,15 +106,57 @@ class EndGame: SKScene {
     override func didMove(to view: SKView) {
 
         
+//        buttonMenu = self.childNode(withName: "buttonMenu") as! MSButtonNode
+//        
+//        buttonMenu.selectedHandler = {
+//            self.loadMenu()
+//            self.gameIsEnded = false
+//            
+//        }
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
+        
         if gameIsEnded == true {
 
-            let sound = SKAction.playSoundFileNamed("gameOverMusic.mp3", waitForCompletion: false)
-            self.run(sound)
-            
+            if let musicURL = Bundle.main.url(forResource: "gameOverMusic", withExtension: "mp3") {
+                gameOverMusic = SKAudioNode(url: musicURL)
+                addChild(gameOverMusic)
+            }
         }
 
 
     }
+    
+//    func loadMenu() {
+//        
+//        // 1) Grab reference to SpriteKit view
+//        guard let skView = self.view as SKView! else {
+//            print("Could not get Skview")
+//            return
+//        }
+//        
+//        /* 2) Load Game scene */
+//        guard let scene = MainMenu(fileNamed:"MainMenu") else {
+//            print("Could not load GameScene.")
+//            return
+//        }
+//        
+//        // 3) Ensure correct aspect mode
+//        scene.scaleMode = .aspectFit
+//        
+//        // Show debug
+//        skView.showsPhysics = true
+//        skView.showsDrawCount = true
+//        skView.showsFPS = true
+//        
+//        // 4) Start game scene
+//        skView.presentScene(scene)
+//        
+//        
+//        
+//    }
+
     
     
 }
