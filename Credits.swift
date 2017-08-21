@@ -25,6 +25,10 @@ class Credits: SKScene, SKPhysicsContactDelegate {
 
     override func didMove(to view: SKView) {
         
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
+        
         if playMusic == true {
             if let musicURL = Bundle.main.url(forResource: "Harp", withExtension: "mp3") {
                 backgroundMusic = SKAudioNode(url: musicURL)

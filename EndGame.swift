@@ -21,6 +21,9 @@ class EndGame: SKScene {
     
     var gameIsEnded: Bool = true
     
+    var gameOverMusic: SKAudioNode!
+    
+//    var buttonMenu : MSButtonNode!
     
     
     required init?(coder aDecoder: NSCoder) {
@@ -86,7 +89,7 @@ class EndGame: SKScene {
         tryAgainLabel.fontColor = SKColor.white
         tryAgainLabel.position = CGPoint(x: self.size.width / 2, y: 50)
         tryAgainLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
-        tryAgainLabel.text = "Play Again"
+        tryAgainLabel.text = "Return to Menu"
         addChild(tryAgainLabel)
     
     }
@@ -94,25 +97,30 @@ class EndGame: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         gameIsEnded = false
-        self.view?.presentScene(GameScene(fileNamed: "GameScene")!)
+        self.view?.presentScene(MainMenu(fileNamed: "MainMenu")!)
   
-        
         
     }
     
     
     override func didMove(to view: SKView) {
 
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
         
         if gameIsEnded == true {
 
-            let sound = SKAction.playSoundFileNamed("gameOverMusic.mp3", waitForCompletion: false)
-            self.run(sound)
-            
+            if let musicURL = Bundle.main.url(forResource: "gameOverMusic", withExtension: "mp3") {
+                gameOverMusic = SKAudioNode(url: musicURL)
+                addChild(gameOverMusic)
+            }
         }
 
 
     }
+    
+
     
     
 }

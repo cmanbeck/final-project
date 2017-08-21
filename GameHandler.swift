@@ -34,11 +34,7 @@ class GameHandler {
         highScore = defaults.integer(forKey: "highScore")
         coinCounter = defaults.integer(forKey: "coinCounter")
         
-//        if let path = Bundle.main.path(forResource: "Level01", ofType: "plist") {
-//            if let level = NSDictionary(contentsOfFile: path) {
-//              levelData = level
-//            }
-//        }
+
     
     }
     

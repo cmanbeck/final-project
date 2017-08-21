@@ -185,10 +185,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves an enemy...
         if ( contactA.categoryBitMask == 7 || contactB.categoryBitMask == 7 ) && ( invincible == false ) && viewIsPaused == false {
             
-            
+            let damage = SKAction.playSoundFileNamed("interface6.wav", waitForCompletion: false)
+            self.run(damage)
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
+                
+                
                 
                 health -= 0.4
                 
@@ -230,6 +233,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves food...
         if contactA.categoryBitMask == 8 || contactB.categoryBitMask == 8 && viewIsPaused == false {
             
+            let foodSound = SKAction.playSoundFileNamed("swing2.wav", waitForCompletion: false)
+            self.run(foodSound)
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
@@ -256,6 +261,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if contactA.categoryBitMask == 9 || contactB.categoryBitMask == 9 && viewIsPaused == false {
             
             
+            let foodSound = SKAction.playSoundFileNamed("swing2.wav", waitForCompletion: false)
+            self.run(foodSound)
+            
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
                 // Increase health and remove the food
@@ -281,6 +289,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // If the collision involves coins...
         if contactA.categoryBitMask == 16 || contactB.categoryBitMask == 16 && viewIsPaused == false {
             
+            
+            let coinSound = SKAction.playSoundFileNamed("coin3.mp3", waitForCompletion: false)
+            self.run(coinSound)
             
             // If the collision involves the player...
             if contactA.categoryBitMask == 1 {
@@ -341,14 +352,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
-//        
-//        addChild(worldNode)
-//        worldNode.addChild(player)
-//        worldNode.addChild(greenObstacleLayer)
-        
-//        gameBackgroundMusic = SKAudioNode(fileNamed:"bgmusic.mp3")
-//        addChild(gameBackgroundMusic)
 
+        
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
         
         if gameOver == false {
             if let musicURL = Bundle.main.url(forResource: "bgmusic", withExtension: "mp3") {
@@ -367,14 +375,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.viewIsPaused = true
                 self.player.physicsBody?.affectedByGravity = false
                 self.player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                print("paused")
+                
             }
             
             // if the game is paused when the button is pressed, it will be unpaused when pressed again
             else if self.viewIsPaused == true {
                 self.viewIsPaused = false
                 self.player.physicsBody?.affectedByGravity = true
-                print("unpaused")
+                
             }
             
         
@@ -453,26 +461,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
        
             player.physicsBody?.affectedByGravity = false
             player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-
-     
-        
-        for t in touches{
-//            let pos = t.location(in: self)
-            
-//            if player.position == pos {
-//                player.position = pos
-//            }
-            
-//            player?.position = pos
-//            print(player.position)
-            
-        }
-        
     }
     
-    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("touches moved")
 
         
         for t in touches{
@@ -480,11 +471,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if viewIsPaused == false {
                 
                 let pos = t.location(in: self)
-//            movePlayer?.position = pos
-//            print(movePlayer?.position)
 
                 player.position = pos
-                print(player.position)
+                
                 
                 player.physicsBody?.affectedByGravity = false
             }
@@ -505,11 +494,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-//    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        if let touch = touches.first {
-//            movableNode = nil
-//        }
-//    }
 
     
     // ************ UPDATE FUNCTION ************
@@ -536,12 +520,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if health < 0  {
             health = 0
-//            gameOver()
+
             
             endGame()
         }
         
-//        scrollWorld()
  
         if viewIsPaused == false {
             updateFoodRight()
@@ -552,22 +535,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             updateDiamondCoins()
             updateRectangleCoins()
             updateFishCoins()
-            
-//            player.physicsBody?.affectedByGravity = true
+
             
             
         }
-//        
+       
         if viewIsPaused == true {
             player.physicsBody?.affectedByGravity = false
         }
    
-        
-        
-        
-        
-//        updateFNode()
-        
+    
         
         scoreTimer += fixedDelta
         spawnTimer+=fixedDelta
@@ -581,8 +558,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         spawnCoinTimer += fixedDelta
         
-        
-//        increaseScore()
         
         if viewIsPaused == false {
             distance+=fixedDelta
@@ -672,11 +647,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 obstacle.removeFromParent()
             }
             
-//            if distance > 600 {
-//                obstacleLayer.removeFromParent()
-//                obstacle.removeFromParent()
-//            }
-            
         }
         
         /* Time to add a new obstacle? */
@@ -717,15 +687,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 greenObstacle.removeFromParent()
             }
             
-//            var vanishingTime = false
-//            
-//            if distance > 400 /* && greenObstacle.position.x >= 350 */{
-//                
-////                greenObstacleLayer.isHidden = true
-////                greenObstacle.isHidden = true
-////                vanishingTime = true
-//            }
-            
+
         }
         
         /* Time to add a new obstacle? */
@@ -767,11 +729,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Remove obstacle node from obstacle layer */
                 redObstacle.removeFromParent()
             }
-            
-//            if distance > 850  {
-//                redObstacleLayer.removeFromParent()
-//                redObstacle.removeFromParent()
-//            }
+        
             
         }
         
@@ -812,11 +770,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 jellyfishNode.removeFromParent()
                 
             }
-            
-//            if distance > 800 && jellyfish.position.y > 570 {
-//                jellyfishScrollLayer.removeFromParent()
-//                jellyfish.removeFromParent()
-//            }
             
         }
         
@@ -1175,8 +1128,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         died = true
-        /* Make the player turn red */
-//        player.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.50))
         
         let transition = SKTransition.fade(withDuration: 0.5)
         let endGameScene = EndGame(size: self.size)
@@ -1190,6 +1141,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func updateStore() {
+        gameOver = true
+        GameHandler.sharedInstance.saveGameStats()
+        
+        state = .gameOver
+        
+//        let currentScore = Int(scoreLabel.text!)
+        let currentCoins = Int(coinLabel.text!)
+        
+//        prevScore = defaults.integer(forKey: "storedScore")
+        prevCoins = defaults.integer(forKey: "coinCounter")
+        
+//        if (currentScore! > prevScore){
+//            defaults.set(currentScore, forKey: "storedScore")
+        
+//        }
+        
+        let totalCoins = currentCoins! + prevCoins
+        
+        defaults.set(totalCoins, forKey: "coinCounter")
+        
+        
+//        died = true
+        
+        let storeScene = Store(size: self.size)
+        
+        storeScene.coinCounter.text = String(defaults.integer(forKey: "coinCounter"))
+        
+        
+        
+    }
+
+    
     func coinPattern() {
         let pattern = randomValue(highestVal: 3, lowestVal: 1) //randomValue is being called
         
@@ -1198,20 +1182,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         case 1: // spawn diamond pattern
             
-            print("1")
+            
             spawnDiamondCoins()
 
             
             
         case 2: // spawn rectangle pattern
             
-            print("2")
+            
             spawnRectangleCoins()
 
             
         case 3:
             
-            print("3")
+            
             
             spawnFishCoins()
             

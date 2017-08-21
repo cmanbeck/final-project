@@ -11,21 +11,35 @@ import SpriteKit
 
 class Store: SKScene, SKPhysicsContactDelegate {
     
+    let levelData = GameHandler.sharedInstance.levelData
+    
     var coin: SKSpriteNode!
     
     var coinCounter:SKLabelNode!
-
+    
     
     var buttonMenu : MSButtonNode!
+    
+    var buttonBuyBlue: MSButtonNode!
     
     var shopBackgroundMusic: SKAudioNode!
     
     var inShop = true
     
+    //    var buttonMenu : MSButtonNode!
+    
+    
+   
 
     
     override func didMove(to view: SKView) {
     
+//        coinCounter.text = "  \(GameHandler.sharedInstance.coinCounter)"
+        
+        self.view?.showsPhysics = false
+        self.view?.showsDrawCount = false
+        self.view?.showsFPS = false
+        
         if inShop == true {
             if let musicURL = Bundle.main.url(forResource: "shopMusic", withExtension: "mp3") {
                 shopBackgroundMusic = SKAudioNode(url: musicURL)
@@ -41,7 +55,22 @@ class Store: SKScene, SKPhysicsContactDelegate {
             self.inShop = false
             
         }
+
         
+//        buttonBuyBlue = self.childNode(withName: "buttonBuyBlue") as! MSButtonNode
+//        
+//        buttonBuyBlue.selectedHandler = {
+//            
+////            coinCounter -= coinCounter
+//            
+//        }
+
+        
+        
+        
+        
+        
+
         
         
 
